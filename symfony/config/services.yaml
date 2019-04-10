@@ -26,3 +26,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    app.service.user_password_encoder:
+        class: App\Service\EncoderService
+        public: true
+        arguments: ['@security.user_password_encoder.generic']
