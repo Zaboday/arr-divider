@@ -36,7 +36,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return true;
+        return !('app_api_authenticate' === $request->attributes->get('_route') && $request->isMethod('POST'));
     }
 
     /**
@@ -50,7 +50,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         return [
-            'token' => $request->query->get($this->tokenKey),
+            'token' => $request->headers->get($this->tokenKey),
         ];
     }
 
@@ -61,7 +61,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         if (null === $apiToken) {
             return;
         }
-
         // if a User object, checkCredentials() is called
         return $this->em->getRepository(User::class)
             ->findOneBy(['apiToken' => $apiToken]);
@@ -84,11 +83,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
+        if ($this->getCredentials($request)['token'] === null) {
+            return $this->start($request);
+        }
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
-
-            // or to translate this message
-            // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
         ];
 
         return new JsonResponse($data, Response::HTTP_FORBIDDEN);
@@ -105,7 +104,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            // you might translate this message
             'message' => 'Authentication Required',
         ];
 

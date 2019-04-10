@@ -26,18 +26,19 @@ class ApiAuthController
     /**
      * @var PasswordEncoderService
      */
-    private $encoder;
+    private $userPasswordEncoder;
 
     public function __construct(EntityManagerInterface $em, PasswordEncoderService $encoderService)
     {
         $this->repo = $em->getRepository(User::class);
-        $this->encoder = $encoderService;
+        $this->userPasswordEncoder = $encoderService;
     }
 
     /**
      * Метод проверяет логин/пароль и возвращает apiToken
      *
-     * @Route("/api/authenticate", name="app_api_authenticate")
+     * @Route("/api/authenticate", methods={"POST"}, name="app_api_authenticate")
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -45,12 +46,13 @@ class ApiAuthController
     public function authenticate(Request $request): JsonResponse
     {
         try {
-            return JsonResponse::create(
-                ['apiToken' => $this->repo->authenticate(
-                    $request->query->get('email', ''),
-                    $request->query->get('password', ''),
-                    $this->encoder
-                )]);
+            return JsonResponse::create([
+                'apiToken' => $this->repo->authenticate(
+                    $request->get('email', ''),
+                    $request->get('password', ''),
+                    $this->userPasswordEncoder
+                ),
+            ]);
         } catch (\Exception $e) {
             return JsonResponse::create(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }

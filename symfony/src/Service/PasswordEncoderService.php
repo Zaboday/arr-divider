@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class PasswordEncoderService.
- * Сервис генерации/валидации паролей юзеров для паблик инжекта
+ * Сервис генерации/валидации паролей юзеров для паблик инжекта в контроллер/другие сервисы
  *
  * @package App\Service
  */

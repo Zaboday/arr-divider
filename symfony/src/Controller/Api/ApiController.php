@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Converter\FormatConverter;
 use App\Service\ArrayDivider\ArrayDividerService;
 use App\Service\ArrayDivider\ICanDivideArray;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @package App\Controller\Api
  */
-class ApiController
+class ApiController extends AbstractController
 {
     /** @var ArrayDividerService */
     private $service;
@@ -26,19 +28,19 @@ class ApiController
     }
 
     /**
-     * Рабочий роут /divide для доступа к рабочему методу сервиса
+     * Рабочий роут /divide для доступа к методу сервиса
      *
-     * @Route("/api/divide", name="app_api_divide")
+     * @Route("/api/divide", methods={"POST"}, name="app_api_divide")
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getDivide(Request $request): JsonResponse
+    public function postDivide(Request $request): JsonResponse
     {
-        $result = $this->service->divide(5, [5, 5, 1, 7, 2, 3, 5]);
-        return JsonResponse::create([
-                'result' => $result,
-            ]
-        );
+        $needle = $request->get('needle');
+        $haystackAsString = $request->get('haystack');
+        $result = $this->service->divide((int)$needle, FormatConverter::stringHaystackToArray($haystackAsString));
+
+        return $this->json(['result' => $result,]);
     }
 }
