@@ -31,4 +31,9 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(\App\Converter\FormatConverter::stringHaystackToArray(' 0,  1, 3,     4 '), [0, 1, 3, 4]);
     }
+
+    public function testDelemeter()
+    {
+        $this->assertEquals(\App\Converter\FormatConverter::stringHaystackToArray('0|1|3|4', '|'), [0, 1, 3, 4]);
+    }
 }

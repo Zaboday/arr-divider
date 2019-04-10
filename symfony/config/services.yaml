@@ -28,6 +28,6 @@ services:
     # please note that last definitions always *replace* previous ones
 
     app.service.user_password_encoder:
-        class: App\Service\EncoderService
+        class: App\Service\PasswordEncoderService
         public: true
         arguments: ['@security.user_password_encoder.generic']

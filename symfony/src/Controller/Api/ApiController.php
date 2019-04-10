@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Converter\FormatConverter;
+use App\Entity\UserResult;
+use App\Factory\EntityFactory;
 use App\Service\ArrayDivider\ArrayDividerService;
 use App\Service\ArrayDivider\ICanDivideArray;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +25,16 @@ class ApiController extends AbstractController
     /** @var ArrayDividerService */
     private $service;
 
-    public function __construct(ICanDivideArray $service)
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(ICanDivideArray $service, EntityManagerInterface $em)
     {
         $this->service = $service;
+        $this->em = $em;
+
     }
 
     /**
@@ -40,6 +50,9 @@ class ApiController extends AbstractController
         $needle = $request->get('needle');
         $haystackAsString = $request->get('haystack');
         $result = $this->service->divide((int)$needle, FormatConverter::stringHaystackToArray($haystackAsString));
+        $this->em->getRepository(UserResult::class)->storeResult(
+            EntityFactory::makeUsersResult($this->getUser(), $needle, $haystackAsString, $result)
+        );
 
         return $this->json(['result' => $result,]);
     }
