@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Service\ArrayDivider\ICanDivide;
+use App\Service\ArrayDivider\ArrayDividerService;
+use App\Service\ArrayDivider\ICanDivideArray;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,23 +17,28 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ApiController
 {
+    /** @var ArrayDividerService */
     private $service;
 
-    public function __construct(ICanDivide $service)
+    public function __construct(ICanDivideArray $service)
     {
         $this->service = $service;
     }
 
     /**
-     * Рабочий роут /divider для доступа к рабочему методу сервиса
+     * Рабочий роут /divide для доступа к рабочему методу сервиса
      *
-     * @Route("/api/divider", name="app_api_divider")
+     * @Route("/api/divide", name="app_api_divide")
      * @param Request $request
      *
      * @return JsonResponse
      */
     public function getDivide(Request $request): JsonResponse
     {
-        return JsonResponse::create(['result' => $this->service->divide(0, [])]);
+        $result = $this->service->divide(5, [5, 5, 1, 7, 2, 3, 5]);
+        return JsonResponse::create([
+                'result' => $result,
+            ]
+        );
     }
 }
