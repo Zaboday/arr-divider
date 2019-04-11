@@ -40,6 +40,9 @@ class ApiController extends AbstractController
 
     /**
      * Рабочий роут /divide для доступа к методу сервиса
+     * Принимает параметры в запросе:
+     *      needle: 2
+     *      haystack: 1, 2, 3, 5
      *
      * @Route("/api/divide", methods={"POST"}, name="app_api_divide")
      * @param Request $request

@@ -41,6 +41,7 @@ class UserRepository extends ServiceEntityRepository
         if (!$encoder->isPasswordValid($user, $plainPassword)) {
             throw new \InvalidArgumentException('Password is invalid.');
         }
+        // We may Reset User.apiToken here
 
         return $user->getApiToken();
     }
