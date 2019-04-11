@@ -2,8 +2,9 @@ Test Task
 ==============
 
 1. Create Service to Divide Array.
-2. Create REST access to service with simple authorisation.
+2. Create REST access to service with simple authorization.
 3. Create Console Command with access to service.
+4. Store user results to DB.
 
 **Stack**
 - PHP 7.1 + MySql. 
